@@ -10,7 +10,7 @@ Module modLoadDefaults
     Public m_Office_Dir As String
     Public m_Office_App_Dir As String
     Public m_AppDirPath = My.Computer.FileSystem.CurrentDirectory.ToString
-    Public sDefPrgFiles As String = My.Computer.FileSystem.SpecialDirectories.ProgramFiles.ToString & "\"
+    Public m_DefPrgFiles As String = My.Computer.FileSystem.SpecialDirectories.ProgramFiles.ToString & "\"
     'Public m_AppDirPath As String = My.Application.Info.DirectoryPath
     Public Function m_LoadDefaults() As Boolean
         'Declare directory path as var
@@ -37,15 +37,15 @@ Module modLoadDefaults
         ' Declare 64bitprgfiles variable
 
         ' set bit program files directory
-        Debug.Print("sDefPrgFiles " & sDefPrgFiles)
+        Debug.Print("m_DefPrgFiles " & m_DefPrgFiles)
         'CreateObject for directory exists
         On Error GoTo RaiseError
         If Not My.Computer.FileSystem.FileExists(sDefDBpath) And Not My.Computer.FileSystem.DirectoryExists(sDefDataPath) Then
             Return False
             Exit Function
         End If
-        If My.Computer.FileSystem.DirectoryExists(sDefPrgFiles & "microsoft office\") Then
-            m_Office_Dir = sDefPrgFiles & "Microsoft Office\"
+        If My.Computer.FileSystem.DirectoryExists(m_DefPrgFiles & "microsoft office\") Then
+            m_Office_Dir = m_DefPrgFiles & "Microsoft Office\"
             Debug.Print(m_Office_Dir)
             'LocateOfficeDir()
             If My.Computer.FileSystem.DirectoryExists(m_Office_Dir) Then
@@ -94,44 +94,31 @@ RaiseError:
                 MyPath = m_Office_Dir & "office" & CStr(LTrim(CStr(counter))) & "\"
                 Debug.Print(MyPath)
             End If
-
         Loop
 
     End Sub
 
     Public Sub SaveRegistry()
 
+        
+        SaveSetting("Church Songs", "Default", "AppDirPath", m_AppDirPath)
         SaveSetting("Church Songs", "Default", "DataPath", m_DataPath)
-
         SaveSetting("Church Songs", "Default", "DBPath", m_DBPath)
-
         SaveSetting("Church Songs", "Default", "PPTPath", m_PPTPath)
-
         SaveSetting("Church Songs", "Default", "PPTView", m_PPTView)
-
         SaveSetting("Church Songs", "Default", "OfficeDir", m_Office_Dir)
-
         SaveSetting("Church Songs", "Default", "OfficeAppDir", m_Office_App_Dir)
-
-
-
+        SaveSetting("Church Songs", "Default", "DefPrgFiles", m_DefPrgFiles)
     End Sub
-
     Public Sub GetRegistry()
-
+        m_AppDirPath = GetSetting("Church Songs", "Default", "AppDirPath","")
         m_DataPath = GetSetting("Church Songs", "Default", "DataPath", "")
-
         m_DBPath = GetSetting("Church Songs", "Default", "DBPath", "")
-
         m_PPTPath = GetSetting("Church Songs", "Default", "PPTPath", "")
-
         m_PPTView = GetSetting("Church Songs", "Default", "PPTView", "")
-
         m_Office_Dir = GetSetting("Church Songs", "Default", "OfficeDir", "")
-
         m_Office_App_Dir = GetSetting("Church Songs", "Default", "OfficeAppDir", "")
-
-
-
+        m_DefPrgFiles = GetSetting("Church Songs", "Default", "DefPrgFiles", "")
     End Sub
 End Module
+m_AppDirPath
