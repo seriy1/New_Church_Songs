@@ -9,21 +9,25 @@ Module modLoadDefaults
     Public m_PPTView As String
     Public m_Office_Dir As String
     Public m_Office_App_Dir As String
-    Public m_AppDirPath = My.Computer.FileSystem.CurrentDirectory.ToString
-    Public m_DefPrgFiles As String = My.Computer.FileSystem.SpecialDirectories.ProgramFiles.ToString & "\"
+    Public m_AppDirPath As String
+    Public m_DefPrgFiles As String
     'Public m_AppDirPath As String = My.Application.Info.DirectoryPath
     Public Function m_LoadDefaults() As Boolean
+        On Error GoTo RaiseError
+        m_AppDirPath = My.Computer.FileSystem.CurrentDirectory.ToString
+        m_DefPrgFiles = My.Computer.FileSystem.SpecialDirectories.ProgramFiles.ToString & "\"
         'Declare directory path as var
         ' Declare local variable sDefDBPath
         Dim sDefDBpath As String
-
+        Debug.Print(m_AppDirPath)
         ' set the default location of database file
         sDefDBpath = m_AppDirPath & "\DB\songs.mdb"
-        Debug.Print("sDefDBPath :" & sDefDBpath)
+        Debug.Print("DefDBPath  = " & sDefDBpath)
         ' Declare local variable for sDefDataPath
         Dim sDefDataPath As String
         ' set default location for the data files
         sDefDataPath = m_AppDirPath & "\data\"
+        Debug.Print("sDefDataPath = " & sDefDataPath)
         ' Declare local variable for Power Point Viewer Path
         Dim sDefPPTViewPath As String
         ' set Power Point Viewer Path to Empty String
@@ -39,21 +43,21 @@ Module modLoadDefaults
         ' set bit program files directory
         Debug.Print("m_DefPrgFiles " & m_DefPrgFiles)
         'CreateObject for directory exists
-        On Error GoTo RaiseError
+
         If Not My.Computer.FileSystem.FileExists(sDefDBpath) And Not My.Computer.FileSystem.DirectoryExists(sDefDataPath) Then
             Return False
             Exit Function
         End If
-        If My.Computer.FileSystem.DirectoryExists(m_DefPrgFiles & "microsoft office\") Then
+        If My.Computer.FileSystem.DirectoryExists(m_DefPrgFiles & "Microsoft office\") Then
             m_Office_Dir = m_DefPrgFiles & "Microsoft Office\"
-            Debug.Print(m_Office_Dir)
+            Debug.Print("m_Office_Dir = " & m_Office_Dir)
             'LocateOfficeDir()
             If My.Computer.FileSystem.DirectoryExists(m_Office_Dir) Then
                 MyPath = m_Office_Dir
                 If My.Computer.FileSystem.FileExists(MyPath & "PowerPNT.exe") Then
                     sDefPPTPath = MyPath & "PowerPNT.exe"
                 End If
-                If My.Computer.FileSystem.FileExists(MyPath & "PPTVIEW.EXE") <> "" Then
+                If My.Computer.FileSystem.FileExists(MyPath & "PPTVIEW.EXE") Then
                     sDefPPTViewPath = MyPath & "PPTVIEW.EXE"
                 End If
             End If
@@ -64,7 +68,8 @@ Module modLoadDefaults
         End If
         Return True
 RaiseError:
-        MsgBox(Err.Description, MsgBoxStyle.Exclamation)
+        MsgBox(Err.Description & " " & Err.Source, MsgBoxStyle.Exclamation)
+        Debug.Print(Err.Erl)
         Return False
         Exit Function
 
@@ -73,6 +78,7 @@ RaiseError:
     Public Sub LocateOfficeDir()
         Dim OfficeDirFound As Boolean
         Dim MyPath As String
+        Debug.Print("m_Office_Dir = " & m_Office_Dir)
         MyPath = m_Office_Dir & "Office\"
         ' Set value of office dir to false
         OfficeDirFound = False
@@ -100,7 +106,6 @@ RaiseError:
 
     Public Sub SaveRegistry()
 
-        
         SaveSetting("Church Songs", "Default", "AppDirPath", m_AppDirPath)
         SaveSetting("Church Songs", "Default", "DataPath", m_DataPath)
         SaveSetting("Church Songs", "Default", "DBPath", m_DBPath)
@@ -111,7 +116,7 @@ RaiseError:
         SaveSetting("Church Songs", "Default", "DefPrgFiles", m_DefPrgFiles)
     End Sub
     Public Sub GetRegistry()
-        m_AppDirPath = GetSetting("Church Songs", "Default", "AppDirPath","")
+        m_AppDirPath = GetSetting("Church Songs", "Default", "AppDirPath", "")
         m_DataPath = GetSetting("Church Songs", "Default", "DataPath", "")
         m_DBPath = GetSetting("Church Songs", "Default", "DBPath", "")
         m_PPTPath = GetSetting("Church Songs", "Default", "PPTPath", "")
@@ -121,4 +126,3 @@ RaiseError:
         m_DefPrgFiles = GetSetting("Church Songs", "Default", "DefPrgFiles", "")
     End Sub
 End Module
-m_AppDirPath
